@@ -1,4 +1,5 @@
 rootProject.name = 'shop'
 include 'item'
 include 'order'
+include 'rabbitmq'
 

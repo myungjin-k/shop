@@ -1,7 +1,7 @@
-package me.myungjin.shop.order.rabbitmq.sender;
+package me.myungjin.shop.rabbitmq.sender;
 
-import me.myungjin.shop.order.rabbitmq.MyTask;
-import me.myungjin.shop.order.rabbitmq.config.RabbitMQConfig;
+import me.myungjin.shop.rabbitmq.MyTask;
+import me.myungjin.shop.rabbitmq.config.RabbitMQConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

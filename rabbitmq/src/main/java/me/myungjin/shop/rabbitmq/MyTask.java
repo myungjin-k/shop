@@ -1,4 +1,4 @@
-package me.myungjin.shop.order.rabbitmq;
+package me.myungjin.shop.rabbitmq;
 
 import java.util.UUID;
 
