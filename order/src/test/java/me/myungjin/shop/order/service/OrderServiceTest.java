@@ -57,6 +57,15 @@ public class OrderServiceTest {
 
     @Test
     @Order(2)
+    void 주문을_조회한다() {
+        OrderMaster order = orderService.findById(master.getId());
+
+        assertThat(order).isNotNull();
+        log.info("Order Master: {}", order);
+    }
+
+    @Test
+    @Order(3)
     void 주문을_취소한다() {
         OrderMaster canceled = orderService.cancel(master.getId());
 

@@ -31,13 +31,16 @@ public class OrderService {
 
     @Transactional
     public OrderMaster cancel(String orderId) {
-        return findMasterByIdWithItems
-
-                (orderId)
+        return findMasterByIdWithItems(orderId)
                 .map(master -> {
                     master.cancel();
                     return save(master);
                 }).orElseThrow(() -> new IllegalArgumentException("invalid order id=" + orderId));
+    }
+
+    @Transactional
+    public OrderMaster findById(String orderId) {
+        return findMasterById(orderId).orElseThrow(() -> new IllegalArgumentException("invalid order id=" + orderId));
     }
 
     private OrderMaster save(OrderMaster entity) {
