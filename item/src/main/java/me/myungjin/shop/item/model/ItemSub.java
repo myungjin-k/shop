@@ -17,7 +17,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @Getter
-@ToString
+@ToString(exclude = "option")
 public class ItemSub {
 
     @Id
