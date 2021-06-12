@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @Getter
-@ToString(exclude = "options")
+@ToString(exclude = {"category", "options"})
 public class ItemMaster {
 
     @Id
@@ -39,7 +39,7 @@ public class ItemMaster {
 
     @Setter
     @JsonBackReference
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "cate_code", nullable = false)
     private Category category;
 

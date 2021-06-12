@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @Getter
-@ToString(exclude = "subs")
+@ToString(exclude = {"master", "subs"})
 public class ItemOption {
 
     @Id
