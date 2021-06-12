@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: item
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: "jdbc:mysql://localhost:3306/mall_item?serverTimezone=Asia/Seoul"
+    username: mjkim
+    password: mjkim
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
