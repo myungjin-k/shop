@@ -22,6 +22,7 @@ public class ItemService {
 
     private final ItemSubRepository itemSubRepository;
 
+
     @Transactional(readOnly = true)
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
@@ -190,6 +191,8 @@ public class ItemService {
         return findSubById(subId)
                 .map(sub -> {
                     sub.updateStock(amount);
+                    if(sub.getStock() < 0)
+                        throw new RuntimeException("out of stock = " + subId);
                     return save(sub);
                 }).orElseThrow(() -> new IllegalArgumentException("invalid Sub id = " + subId));
     }
