@@ -4,7 +4,7 @@ plugins {
     id 'java'
 }
 
-group = 'me.myungjin.mall'
+group = 'me.myungjin.shop'
 version = '0.0.1'
 sourceCompatibility = '11'
 
@@ -23,6 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.apache.commons:commons-lang3'
     implementation 'com.google.guava:guava:23.5-jre'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
