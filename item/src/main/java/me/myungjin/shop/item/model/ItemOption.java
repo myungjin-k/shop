@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
 @Getter
-@ToString(exclude = {"master", "subs"})
+@ToString(exclude = "master")
 public class ItemOption {
 
     @Id
@@ -30,6 +30,12 @@ public class ItemOption {
 
     @Column(name = "option_name", nullable = false, unique = true)
     private String optionName;
+
+    @Column(name = "price")
+    private int price;
+
+    @Column(name = "stock")
+    private int stock;
 
     @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
@@ -43,15 +49,14 @@ public class ItemOption {
     @JoinColumn(name = "item_id", nullable = false)
     private ItemMaster master;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "option", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ItemSub> subs = new ArrayList<>();
-
     @Builder
-    public ItemOption(String optionName, LocalDateTime createAt, LocalDateTime updateAt, ItemMaster master) {
+    public ItemOption(String optionName, int price, int stock,
+                      LocalDateTime createAt, LocalDateTime updateAt, ItemMaster master) {
         this.optionName = optionName;
+        this.price = price;
+        this.stock = stock;
         this.createAt = defaultIfNull(createAt, now());
-        this.updateAt = defaultIfNull(updateAt, now());
+        this.updateAt = updateAt;
         this.master = master;
     }
 
@@ -59,9 +64,18 @@ public class ItemOption {
         return ofNullable(updateAt);
     }
 
-    public void update(ItemMaster master, String optionName) {
-        this.optionName = optionName;
+    public void updateDefaultInfo(ItemMaster master, ItemOption option) {
+        this.optionName = option.optionName;
+        this.price = option.price;
+        this.stock = option.stock;
         this.master = master;
         this.updateAt = now();
     }
+
+    public void updateStock(int amount) {
+        this.stock += amount;
+        this.updateAt = now();
+    }
+
+
 }

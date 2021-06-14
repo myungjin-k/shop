@@ -2,7 +2,7 @@ package me.myungjin.shop.item.rabbitmq.receiver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.myungjin.shop.item.model.ItemSub;
+import me.myungjin.shop.item.model.ItemOption;
 import me.myungjin.shop.item.rabbitmq.config.MyTask;
 import me.myungjin.shop.item.rabbitmq.sender.RabbitMessagePublisher;
 import me.myungjin.shop.item.service.ItemService;
@@ -29,7 +29,7 @@ public class RabbitMQOrderReceiver{
         try {
             for(String key : items.keySet()) {
                 int cnt = items.get(key);
-                ItemSub item = itemService.updateStock(key, -cnt);
+                ItemOption item = itemService.updateStock(key, -cnt);
                 log.info("Item Stock Updated : {}", item);
             }
             messagePublisher.publish("item.stock.updated", myTask);

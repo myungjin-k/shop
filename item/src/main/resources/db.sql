@@ -62,6 +62,8 @@ DROP TABLE IF EXISTS `mall_item`.`item_option` ;
 CREATE TABLE IF NOT EXISTS `mall_item`.`item_option` (
   `id` VARCHAR(50) NOT NULL,
   `option_name` VARCHAR(255) NOT NULL,
+  `price` INT NOT NULL DEFAULT 0,
+  `stock` INT NOT NULL DEFAULT 0,
   `create_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `update_at` DATETIME NULL,
   `item_id` VARCHAR(50) NOT NULL,
@@ -71,30 +73,6 @@ CREATE TABLE IF NOT EXISTS `mall_item`.`item_option` (
   CONSTRAINT `FK_ITEM_OPTION_TO_ITEM_MASTER`
     FOREIGN KEY (`item_id`)
     REFERENCES `mall_item`.`item_master` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mall_item`.`item_sub`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mall_item`.`item_sub` ;
-
-CREATE TABLE IF NOT EXISTS `mall_item`.`item_sub` (
-  `id` VARCHAR(50) NOT NULL,
-  `sub_name` VARCHAR(255) NOT NULL,
-  `price` INT NOT NULL DEFAULT 1,
-  `stock` INT NOT NULL DEFAULT 0,
-  `create_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  `update_at` DATETIME NULL,
-  `option_id` VARCHAR(50) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `FK_ITEM_SUB_TO_ITEM_OPTION_idx` (`option_id` ASC) VISIBLE,
-  UNIQUE INDEX `sub_name_UNIQUE` (`sub_name` ASC) VISIBLE,
-  CONSTRAINT `FK_ITEM_SUB_TO_ITEM_OPTION`
-    FOREIGN KEY (`option_id`)
-    REFERENCES `mall_item`.`item_option` (`id`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT)
 ENGINE = InnoDB;

@@ -3,7 +3,6 @@ package me.myungjin.shop.item.service;
 import me.myungjin.shop.item.model.Category;
 import me.myungjin.shop.item.model.ItemMaster;
 import me.myungjin.shop.item.model.ItemOption;
-import me.myungjin.shop.item.model.ItemSub;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +33,6 @@ public class ItemServiceTest {
 
     private ItemOption newItemOption;
 
-    private ItemSub newItemSub;
-
     @BeforeAll
     void setup() {
         newCategory = Category.builder()
@@ -45,12 +42,9 @@ public class ItemServiceTest {
                 .itemName("TEST_ITEM")
                 .build();
         newItemOption = ItemOption.builder()
-                .optionName("TEST_OPTION")
-                .build();
-        newItemSub = ItemSub.builder()
-                .subName("TEST_SUB")
                 .price(2000)
                 .stock(50)
+                .optionName("TEST_OPTION")
                 .build();
     }
 
@@ -84,19 +78,24 @@ public class ItemServiceTest {
         assertThat(updated).isNotNull();
         assertThat(name).isEqualTo(updated.getCateName());
         log.info("Category Updated: {}", updated);
+        newCategory = updated;
     }
 
     @Test
     @Order(4)
     void 카테고리별_상품_리스트를_조회한다() {
+
+        log.info("#################### given");
         List<ItemMaster> masterList = Arrays.asList(
                 new ItemMaster("상품1", null, null, null),
                 new ItemMaster("상품2", null, null, null)
         );
         masterList.forEach(m -> itemService.saveMaster(newCategory.getCateCode(), m));
 
+        log.info("#################### when");
         List<ItemMaster> results = itemService.getAllByCateCode(newCategory.getCateCode());
 
+        log.info("#################### then");
         assertThat(results.size()).isEqualTo(2);
         results.forEach(m -> log.info("ItemMaster: {}", m));
     }
@@ -134,20 +133,24 @@ public class ItemServiceTest {
         assertThat(name).isEqualTo(updated.getItemName());
         //assertThat(newCategory.getCateCode()).isEqualTo(updated.getCategory().getCateCode());
         log.info("ItemMaster Updated: {}", updated);
+        newItemMaster = updated;
     }
 
     @Test
     @Order(8)
     void 마스터별_옵션_리스트를_조회한다() {
+
+        log.info("#################### given");
         List<ItemOption> optionList = Arrays.asList(
-                new ItemOption("옵션1", null, null, null),
-                new ItemOption("옵션2", null, null, null)
+                new ItemOption("옵션1", 1000, 100, null, null, null),
+                new ItemOption("옵션2", 1000, 120, null, null, null)
         );
         optionList.forEach(m -> itemService.saveOption(newItemMaster.getId(), m));
 
-
+        log.info("################### when");
         List<ItemOption> results = itemService.getAllByItemId(newItemMaster.getId());
 
+        log.info("################### then");
         assertThat(results.size()).isEqualTo(2);
         results.forEach(m -> log.info("ItemOption: {}", m));
     }
@@ -175,91 +178,45 @@ public class ItemServiceTest {
     @Test
     @Order(11)
     void 상품옵션을_수정한다() {
+
+        log.info("#################### given");
         String name = "수정";
+        int price = 2000, stock = 10;
+
         ItemMaster master2 = itemService.saveMaster(newCategory.getCateCode(), new ItemMaster("TEST_ITEM_2", null, null, null));
         log.info("ItemOption: {}", newItemOption);
 
-        ItemOption updated = itemService.updateItemOption(newItemOption.getId(), master2.getId(), name);
+        ItemOption newOption = ItemOption.builder()
+                .optionName(name)
+                .price(price)
+                .stock(stock)
+                .build();
 
+        log.info("#################### when");
+        ItemOption updated = itemService.updateItemOption(newItemOption.getId(), master2.getId(), newOption);
+
+        log.info("#################### then");
         assertThat(updated).isNotNull();
         assertThat(name).isEqualTo(updated.getOptionName());
+        assertThat(price).isEqualTo(updated.getPrice());
+        assertThat(stock).isEqualTo(updated.getStock());
         assertThat(master2.getId()).isEqualTo(updated.getMaster().getId());
         log.info("ItemOption Updated: {}", updated);
-    }
-
-    @Test
-    @Order(12)
-    void 옵션별_서브_리스트를_조회한다() {
-        List<ItemSub> subList = Arrays.asList(
-                new ItemSub("서브1", 1000, 10, null, null, null),
-                new ItemSub("서브2", 1500, 10, null, null, null)
-        );
-        subList.forEach(m -> itemService.saveSub(newItemOption.getId(), m));
-
-
-        List<ItemSub> results = itemService.getAllByOptionId(newItemOption.getId());
-
-        assertThat(results.size()).isEqualTo(2);
-        results.forEach(m -> log.info("ItemSub: {}", m));
-    }
-
-    @Test
-    @Order(13)
-    void 상품서브를_등록한다() {
-        ItemSub saved = itemService.saveSub(newItemOption.getId(), newItemSub);
-
-        assertThat(saved).isNotNull();
-        log.info("ItemOption: {}", saved);
-        newItemSub = saved;
-    }
-
-    @Test
-    @Order(14)
-    void 상품서브를_조회한다() {
-        ItemSub result = itemService.findSub(newItemSub.getId());
-
-        assertThat(result).isNotNull();
-        assertThat(newItemSub.getId()).isEqualTo(result.getId());
-        log.info("ItemSub: {}", result);
-    }
-
-    @Test
-    @Order(15)
-    void 상품서브를_수정한다() {
-        String name = "수정";
-        int price = 1200;
-        ItemOption option2 = itemService.saveOption(newItemMaster.getId(), new ItemOption("TEST_OPTION_2", null, null, null));
-        log.info("ItemSub: {}", newItemSub);
-
-        ItemSub updated = itemService.updateItemSub(newItemSub.getId(), option2.getId(), price, name);
-
-        assertThat(updated).isNotNull();
-        assertThat(name).isEqualTo(updated.getSubName());
-        assertThat(price).isEqualTo(updated.getPrice());
-        assertThat(option2.getId()).isEqualTo(updated.getOption().getId());
-        log.info("ItemSub Updated: {}", updated);
+        newItemOption = updated;
     }
 
     @Test
     @Order(16)
     void 상품_재고를_수정한다() {
         int amount = -1;
-        int beforeStock = newItemSub.getStock();
-        log.info("ItemSub: {}", newItemSub);
+        int beforeStock = newItemOption.getStock();
+        log.info("ItemOption: {}", newItemOption);
 
-        ItemSub updated = itemService.updateStock(newItemSub.getId(), amount);
+        ItemOption updated = itemService.updateStock(newItemOption.getId(), amount);
 
         assertThat(updated).isNotNull();
         assertThat(updated.getStock()).isEqualTo(beforeStock + amount);
-        log.info("ItemSub Updated: {}", updated);
-    }
-
-    @Test
-    @Order(17)
-    void 상품서브를_삭제한다() {
-        ItemSub result = itemService.deleteSub(newItemSub.getId());
-
-        assertThat(result).isNotNull();
+        log.info("ItemOption Stock Updated: {}", updated);
     }
 
     @Test

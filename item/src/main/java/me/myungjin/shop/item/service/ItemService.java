@@ -20,9 +20,6 @@ public class ItemService {
 
     private final ItemOptionRepository itemOptionRepository;
 
-    private final ItemSubRepository itemSubRepository;
-
-
     @Transactional(readOnly = true)
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
@@ -125,76 +122,32 @@ public class ItemService {
 
     @Transactional
     public ItemOption deleteOption(String id) {
-        ItemOption option =  findOptionById(id)
+        ItemOption option = findOptionById(id)
                 .orElseThrow(() -> new IllegalArgumentException("invalid option id = " + id));
         itemOptionRepository.delete(option);
         return option;
     }
 
-
     @Transactional
-    public ItemOption updateItemOption(String optionId, String itemId, String optionName) {
+    public ItemOption updateItemOption(String optionId, String itemId, ItemOption newOption) {
         return findOptionById(optionId)
                 .map(option -> {
                     ItemMaster master = findMasterById(itemId)
                             .orElseThrow(() -> new IllegalArgumentException("invalid item id = " + itemId));
-                    option.update(master, optionName);
+                    option.updateDefaultInfo(master, newOption);
                     return save(option);
                 }).orElseThrow(() -> new IllegalArgumentException("invalid option id = " + optionId));
     }
 
-    @Transactional(readOnly = true)
-    public List<ItemSub> getAllByOptionId(String optionId) {
-        return findOptionById(optionId)
-                .map(itemSubRepository::findAllByOption)
-                .orElse(emptyList());
-    }
-
     @Transactional
-    public ItemSub saveSub(String optionId, ItemSub itemSub) {
+    public ItemOption updateStock(String optionId, int amount) {
         return findOptionById(optionId)
                 .map(option -> {
-                    itemSub.setOption(option);
-                    return save(itemSub);
+                    option.updateStock(amount);
+                    if(option.getStock() < 0)
+                        throw new RuntimeException("out of stock = " + optionId);
+                    return save(option);
                 }).orElseThrow(() -> new IllegalArgumentException("invalid option id = " + optionId));
-
-    }
-
-    @Transactional(readOnly = true)
-    public ItemSub findSub(String id) {
-        return findSubById(id)
-                .orElseThrow(() -> new IllegalArgumentException("invalid Sub id = " + id));
-    }
-
-    @Transactional
-    public ItemSub deleteSub(String id) {
-        ItemSub sub =  findSubById(id)
-                .orElseThrow(() -> new IllegalArgumentException("invalid Sub id = " + id));
-        itemSubRepository.delete(sub);
-        return sub;
-    }
-
-
-    @Transactional
-    public ItemSub updateItemSub(String subId, String optionId, int price, String subName) {
-        return findSubById(subId)
-                .map(sub -> {
-                    ItemOption option = findOptionById(optionId)
-                            .orElseThrow(() -> new IllegalArgumentException("invalid option id = " + optionId));
-                    sub.updateInfo(subName, price, option);
-                    return save(sub);
-                }).orElseThrow(() -> new IllegalArgumentException("invalid Sub id = " + subId));
-    }
-
-    @Transactional
-    public ItemSub updateStock(String subId, int amount) {
-        return findSubById(subId)
-                .map(sub -> {
-                    sub.updateStock(amount);
-                    if(sub.getStock() < 0)
-                        throw new RuntimeException("out of stock = " + subId);
-                    return save(sub);
-                }).orElseThrow(() -> new IllegalArgumentException("invalid Sub id = " + subId));
     }
 
     private Category save(Category category) {
@@ -209,10 +162,6 @@ public class ItemService {
         return itemOptionRepository.save(itemOption);
     }
 
-    private ItemSub save(ItemSub itemSub) {
-        return itemSubRepository.save(itemSub);
-    }
-
     private Optional<Category> findCategoryById(String code) {
         return categoryRepository.findById(code);
     }
@@ -225,7 +174,4 @@ public class ItemService {
         return itemOptionRepository.findById(id);
     }
 
-    private Optional<ItemSub> findSubById(String id) {
-        return itemSubRepository.findById(id);
-    }
 }
