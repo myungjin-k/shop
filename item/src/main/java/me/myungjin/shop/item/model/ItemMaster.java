@@ -51,7 +51,7 @@ public class ItemMaster {
     public ItemMaster(String itemName, LocalDateTime createAt, LocalDateTime updateAt, Category category) {
         this.itemName = itemName;
         this.createAt = defaultIfNull(createAt, now());
-        this.updateAt = defaultIfNull(updateAt, now());
+        this.updateAt = updateAt;
         this.category = category;
     }
 

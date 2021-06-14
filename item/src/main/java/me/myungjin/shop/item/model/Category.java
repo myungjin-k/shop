@@ -46,7 +46,7 @@ public class Category {
         checkNotNull(cateName,  "cateName must be provided.");
         this.cateName = cateName;
         this.createAt = defaultIfNull(createAt, now());
-        this.updateAt = defaultIfNull(updateAt, now());
+        this.updateAt = updateAt;
     }
 
     public Optional<LocalDateTime> getUpdateAt() {
