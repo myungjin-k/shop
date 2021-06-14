@@ -2,6 +2,6 @@ package me.myungjin.shop.order.model;
 
 public enum OrderStatus {
 
-    REQUESTED, CANCELED, COMPLETED
+    REQUESTED, PROCESSING, SERVED, CANCELED
 
 }

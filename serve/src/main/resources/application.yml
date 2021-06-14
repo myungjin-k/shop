@@ -1,0 +1,25 @@
+server:
+  port: 8292
+spring:
+  application:
+    name: serve
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: "jdbc:mysql://localhost:3306/mall_item?serverTimezone=Asia/Seoul"
+    username: mjkim
+    password: mjkim
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format-sql: true
+  rabbitmq:
+    addresses: 127.0.0.1
+    port: 5672
+    username: admin
+    password: admin
+    cache:
+      channel:
+        size: 10
+      connection:
+        size: 10

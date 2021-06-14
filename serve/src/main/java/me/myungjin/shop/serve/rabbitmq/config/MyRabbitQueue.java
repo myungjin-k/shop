@@ -1,4 +1,4 @@
-package me.myungjin.shop.order.rabbitmq.config;
+package me.myungjin.shop.serve.rabbitmq.config;
 
 import lombok.Getter;
 

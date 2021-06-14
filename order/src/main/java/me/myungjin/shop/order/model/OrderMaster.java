@@ -1,6 +1,5 @@
 package me.myungjin.shop.order.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -55,7 +54,7 @@ public class OrderMaster {
         this.totalAmount = totalAmount;
         this.status = status;
         this.createAt = defaultIfNull(createAt, now());
-        this.updateAt = defaultIfNull(updateAt, now());
+        this.updateAt = updateAt;
     }
 
     public Optional<LocalDateTime> getUpdateAt() {
@@ -70,5 +69,10 @@ public class OrderMaster {
     public void addItem(OrderItem item){
         item.setMaster(this);
         this.items.add(item);
+    }
+
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+        this.updateAt = now();
     }
 }

@@ -7,12 +7,13 @@ import me.myungjin.shop.order.model.OrderMaster;
 import me.myungjin.shop.order.model.OrderMasterRepository;
 import me.myungjin.shop.order.model.OrderStatus;
 import me.myungjin.shop.order.rabbitmq.config.MyTask;
+import me.myungjin.shop.order.rabbitmq.config.OrderItemMessageData;
+import me.myungjin.shop.order.rabbitmq.config.OrderMessageData;
 import me.myungjin.shop.order.rabbitmq.sender.RabbitMessagePublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -32,31 +33,7 @@ public class OrderService {
 
     @Transactional
     public OrderMaster order(OrderMaster orderMaster, List<OrderItem> orderItems) {
-        //messagePublisher.publish(MyRabbitQueue.REQUEST.getQueueName(), new MyTask("send new order", orderItems));
         for(OrderItem item : orderItems) {
-            orderMaster.addItem(item);
-        }
-        OrderMaster saved = save(orderMaster);
-        return saved;
-    }
-
-    @Transactional
-    public OrderMaster order2(MyTask myTask) {
-        log.info("order save logic...");
-        Map<String, Object> data = (Map<String, Object>) myTask.getData();
-        OrderMaster orderMaster = OrderMaster.builder()
-                .itemNameAbbr((String) data.get("itemNameAbbr"))
-                .status(OrderStatus.REQUESTED)
-                .totalAmount((int) data.get("totalAmount"))
-                .build();
-
-        Map<String, Integer> items = (Map<String, Integer>) (((Map<String, Object>) myTask.getData()).get("items"));
-        for(String itemId : items.keySet()) {
-            int count = items.get(itemId);
-            OrderItem item = OrderItem.builder()
-                        .count(count)
-                        .itemId(itemId)
-                        .build();
             orderMaster.addItem(item);
         }
         OrderMaster saved = save(orderMaster);
@@ -68,6 +45,15 @@ public class OrderService {
         return findMasterByIdWithItems(orderId)
                 .map(master -> {
                     master.cancel();
+                    return save(master);
+                }).orElseThrow(() -> new IllegalArgumentException("invalid order id=" + orderId));
+    }
+
+    @Transactional
+    public OrderMaster updateStatus(String orderId, OrderStatus status) {
+        return findMasterById(orderId)
+                .map(master -> {
+                    master.updateStatus(status);
                     return save(master);
                 }).orElseThrow(() -> new IllegalArgumentException("invalid order id=" + orderId));
     }

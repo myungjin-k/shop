@@ -1,4 +1,4 @@
-package me.myungjin.shop.order.rabbitmq.config;
+package me.myungjin.shop.serve.rabbitmq.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -31,5 +31,7 @@ public class MyTask {
         this.msg = isEmpty(msg) ? DEFAULT_MSG : msg;
         this.data = data;
     }
+
+
 
 }

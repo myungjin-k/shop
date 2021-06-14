@@ -1,6 +1,5 @@
 package me.myungjin.shop.order.model;
 
-import org.hibernate.criterion.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

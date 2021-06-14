@@ -47,7 +47,7 @@ public class OrderItem {
     public OrderItem(int count, LocalDateTime createAt, LocalDateTime updateAt, OrderMaster master, String itemId) {
         this.count = count;
         this.createAt = defaultIfNull(createAt, now());
-        this.updateAt = defaultIfNull(updateAt, now());
+        this.updateAt = updateAt;
         this.master = master;
         this.itemId = itemId;
     }
