@@ -6,10 +6,6 @@ import me.myungjin.shop.order.model.OrderItem;
 import me.myungjin.shop.order.model.OrderMaster;
 import me.myungjin.shop.order.model.OrderMasterRepository;
 import me.myungjin.shop.order.model.OrderStatus;
-import me.myungjin.shop.order.rabbitmq.config.MyTask;
-import me.myungjin.shop.order.rabbitmq.config.OrderItemMessageData;
-import me.myungjin.shop.order.rabbitmq.config.OrderMessageData;
-import me.myungjin.shop.order.rabbitmq.sender.RabbitMessagePublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +18,6 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderMasterRepository orderMasterRepository;
-
-    private final RabbitMessagePublisher messagePublisher;
 
     @Transactional(readOnly = true)
     public List<OrderMaster> findAllOrderDesc() {

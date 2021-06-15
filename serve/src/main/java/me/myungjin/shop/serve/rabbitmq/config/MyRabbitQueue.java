@@ -6,16 +6,14 @@ import lombok.Getter;
 public enum MyRabbitQueue {
 
     SAMPLE_TASK("order.sample"),
-    REQUEST("order.request"),
-    ACCEPT("order.accept"),
+    REQUEST("order.request"), // 주문 요청
+    ACCEPT("order.accept"), // 주문 승인
     ACCEPT_NOTICE("order.accept.notice"),
-    CANCEL("order.cancel"),
+    REJECT("order.reject"),  // 주문 거절
+    SERVED("order.served"), // 제조 완료
+    PICKUP("order.pickup"), // 픽업 완료
     EMPTY("order.empty"),
-    STOCK_INSUFFICIENT("item.stock.insufficient"),
-    ITEM_NOTFOUND("item.notfound"),
-    SERVED("order.served"),
-    COMPLETE("order.complete"),
-    PICKUP("order.pickup")
+    COMPLETE("order.complete")
     ;
 
     private String queueName;

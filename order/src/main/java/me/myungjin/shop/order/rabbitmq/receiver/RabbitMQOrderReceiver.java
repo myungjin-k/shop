@@ -1,5 +1,7 @@
 package me.myungjin.shop.order.rabbitmq.receiver;
 
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.myungjin.shop.order.model.OrderStatus;
@@ -7,8 +9,9 @@ import me.myungjin.shop.order.rabbitmq.config.MyTask;
 import me.myungjin.shop.order.rabbitmq.sender.RabbitMessagePublisher;
 import me.myungjin.shop.order.service.OrderService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Slf4j
 @Component
@@ -25,33 +28,29 @@ public class RabbitMQOrderReceiver {
         orderService.order2(myTask);
     }*/
 
-    @RabbitListener(id = "item.stock.insufficient", queues = "item.stock.insufficient")
-    public void handleStockInsufficient(MyTask myTask) {
-        throw new RuntimeException("Insufficient Stock Queue Received and Handle:" + myTask.toString() );
+    @RabbitListener(id = "order.reject", queues = "order.reject")
+    public void handleOrderRejectNotice(MyTask myTask) {
+        log.info("Order Reject Queue Received and Handle: {}", myTask);
+        orderService.cancel(myTask.getData().getOrderId());
     }
 
-    @RabbitListener(id = "item.notfound", queues = "item.notfound")
-    public void handleItemNotfound(MyTask myTask) {
-        throw new RuntimeException("Item Notfound Queue Received and Handle:" + myTask.toString() );
+    @RabbitListener(id = "order.accept.notice", queues = "order.accept.notice")
+    public void handleAcceptNotice(Channel channel, MyTask myTask) throws IOException {
+        AMQP.Queue.DeclareOk response = channel.queueDeclarePassive("order.accept");
+        log.info("Order accept notice Queue Received and Handle: {}", myTask.toString());
+        orderService.updateStatus(myTask.getData().getOrderId(), OrderStatus.valueOf(myTask.getData().getStatus()));
     }
 
-    @Async
     @RabbitListener(id = "order.served", queues = "order.served")
-    public void handleServed(MyTask myTask) throws InterruptedException {
+    public void handleServedNotice(MyTask myTask) throws InterruptedException {
         log.info("Order Served Queue Received and Handle: {}", myTask.toString());
         orderService.updateStatus(myTask.getData().getOrderId(), OrderStatus.valueOf(myTask.getData().getStatus()));
 
         log.info("pick up ....");
         Thread.sleep(10000);
+        log.info("Got Ordered Menu!");
 
         messagePublisher.publish("order.pickup", myTask);
-    }
-
-    @Async
-    @RabbitListener(id = "order.accept.notice", queues = "order.accept.notice")
-    public void handleAcceptNotice(MyTask myTask) {
-        log.info("Order accept notice Queue Received and Handle: {}", myTask.toString());
-        orderService.updateStatus(myTask.getData().getOrderId(), OrderStatus.valueOf(myTask.getData().getStatus()));
     }
 
 
